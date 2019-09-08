@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, session
+from flask import Flask, session, render_template, request
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -20,7 +20,20 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
+from users import UserHandler
 
 @app.route("/")
 def index():
-    return "Project 1: TODO"
+    return render_template("index.html")
+
+@app.route("/register", methods=["POST", "GET"])
+def register():
+    if request.method == 'POST':
+        userHandler = UserHandler(request.form["username"], request.form["password"])
+        try:
+            userHandler.register()
+        except Exception as e:
+            print(e)
+        finally:
+            return "hello from register POST"
+    return "hello from register GET"
