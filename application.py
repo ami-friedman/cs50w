@@ -1,7 +1,7 @@
 import os
 import sys, traceback
 
-from flask import Flask, session, render_template, request, redirect, url_for, session
+from flask import Flask, session, render_template, request, redirect, url_for, session, flash
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -66,15 +66,14 @@ def login():
                 session['username']=username
                 return redirect(url_for('index'))
             else:
-                return redirect(url_for('login'))
+                flash("Username not found or password is incorrect")
+                return redirect(url_for('index'))
         except Exception as e:
             traceback.print_exc(file=sys.stdout)
-            return redirect(url_for('login'))
-    else:
-        return render_template('login.html')
+            return redirect(url_for('index'))
 
 @app.route("/logout", methods=["GET"])
 def logout():
     # Clear the session
     session['username'] = None
-    return redirect(url_for('login'))
+    return redirect(url_for('index'))

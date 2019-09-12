@@ -4,29 +4,29 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
     <a class="navbar-brand logo" href="/">The Bookie Review</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
   
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item active">
+      <ul class="navbar-nav ml-auto" >
           {% if username is none %}
-          <a class="nav-link" href="/register">Register <span class="sr-only">(current)</span></a>
-        </li>
         <form class="form-inline my-2 my-lg-0" action="{{ url_for('login') }}" method="POST">
-            <input name="username" type="text" class="form-control form-control-sm mr-sm-2" id="username" placeholder="Username">
-            <input type="password" name="password" class="form-control form-control-sm mr-sm-2" id="password" placeholder="Password">
+            <input name="username" pattern="[a-zA-Z0-9-]+" requierd type="text" class="form-control form-control-sm mr-sm-2" id="username" placeholder="Username">
+            <input type="password" pattern="[a-zA-Z0-9-]+" required name="password" class="form-control form-control-sm mr-sm-2" id="password" placeholder="Password">
             <button class="btn btn-outline-success btn-sm my-2 my-sm-0">Login</button>
           </form>
+          <li class="nav-item active">
+              <a class="nav-link" href="/register">Register <span class="sr-only">(current)</span></a>
+            </li>
         {% else %}
         <li class="nav-item">
             <a class="nav-link">{{ username }} <span class="sr-only">(current)</span></a>
           </li>
         <li class="nav-item">
-            <a class="nav-link" href="/login">Logout <span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="/logout">Logout <span class="sr-only">(current)</span></a>
           </li>
         {% endif %}
       </ul>
@@ -38,6 +38,18 @@
     {% block header %}{% endblock %}
   </header>
   <div class="container">
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    {{ message }} 
+  </div>          
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
     {% block content %}{% endblock %}
   </div>
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
