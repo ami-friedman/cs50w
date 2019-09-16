@@ -1,17 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="row">
+<ul class="list-group mt-3">
                 {% for book in session.pop('books', []): %}
-                          <div class="col-sm">
-                                <div class="card mx-auto mt-3" style="width: 18rem;">
-                                        <div class="card-body">
-                                          <h5 class="card-title card-link"><a href="#">{{ book.title }}</a></h5>
-                                          <h6 class="card-subtitle mb-2 text-muted">By: {{ book.author }}, {{ book.year }}</h6>
-                                          <p class="card-text">ISBN: {{ book.isbn }}</p>
-                                        </div>
-                                      </div>
-                          </div>
+                <li class="list-group-item"><a href="/books/{{ book.isbn }}">{{ book.title }}</a></li>
                 {% endfor %}
-</div>
+</ul>
 {% endblock %}

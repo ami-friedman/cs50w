@@ -12,6 +12,7 @@ class UserHandler():
             user = User()
             try:
                 user.create(self._username, self._password)
+                return user
             except Exception as e:
                 traceback.print_exc(file=sys.stdout)
         else:
@@ -20,7 +21,8 @@ class UserHandler():
     def login(self):
         if self._validate_username() and self._validate_password():
             user = User(self._username, self._password)
-            return user.login()
+            user.login()
+            return user
         return None
 
     def _validate_username(self):

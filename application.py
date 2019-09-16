@@ -5,8 +5,6 @@ from flask import Flask, session, render_template, request, redirect, url_for, s
 from flask_session import Session
 
 
-
-
 app = Flask(__name__)
 print(__name__)
 
@@ -44,11 +42,6 @@ def index():
         return render_template("index.html", username=username)
     return render_template("index.html")
 
-@app.route("/test")
-def test():
-    print(request.form)
-
-
 # Users
 @app.route("/register", methods=["POST", "GET"])
 def register():
@@ -68,9 +61,10 @@ def login():
     if request.method == 'POST':
         userHandler = UserHandler(request.form.get('username'), request.form.get('password'))
         try:
-            username = userHandler.login()
-            if username:
-                session['username']=username
+            user = userHandler.login()
+            if user:
+                session['username']=user.username
+                session['id']=user.id
                 return redirect(url_for('index'))
             else:
                 flash("Username not found or password is incorrect")
@@ -83,21 +77,41 @@ def login():
 def logout():
     # Clear the session
     session['username'] = None
+    session['id'] = None
     return redirect(url_for('index'))
 
-@app.route("/results", methods=["GET"])
-def results():
-    # Clear the session
-    return render_template('results.html')
-
+# Books
 @app.route("/search", methods=["POST", "GET"])
 def search():
     if request.method == "POST":
         topic = request.form.get('topic')
         search_term = request.form.get('search_term')
         books = func_table[topic](search_term)
+        if len(books) == 0:
+            flash('No matches found')
         session['books'] = books
         return redirect(url_for('results'))
     else:
         return render_template('search.html')
+
+
+@app.route("/results", methods=["GET"])
+def results():
+    return render_template('results.html')
+
+
+@app.route("/books/<isbn>", methods=["GET"])
+def books(isbn):
+
+    books = func_table['isbn'](isbn)
+    return render_template('book.html', book = books[0])
+
+@app.route("/review", methods=["POST"])
+def review():
+    print(request.form.get('review'))
+    print(request.form.get('rating'))
+    print(session['id'])
+    return render_template('index.html')
+
+
 
