@@ -1,4 +1,4 @@
-from application import db
+from dbwrapper import db
 import sys, traceback
 
 class User():
