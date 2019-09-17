@@ -19,6 +19,12 @@ def find_book_by_title(title):
     books.find_by_title(title)
     return books.books
 
+def add_review(user_id, isbn, review, rating):
+    books = Books()
+    books.add_review(review, rating, user_id, isbn)
+
+
+
 
 func_table = {
         'isbn':find_book_by_isbn,

@@ -29,11 +29,14 @@ class Book():
     def review(self):
         return self._review
 
-class Books():
+class Books(object):
 
-    _books = []
+    def __init__(self):
+        self._books = []
+        super()
 
     def find_by_isbn(self, isbn):
+        print(len(self._books))
         try:
             rows = db.execute("SELECT books.isbn, books.title, authors.name, books.year FROM books INNER JOIN authors on books .author_id = authors.id WHERE isbn LIKE :isbn", {'isbn':'%' + isbn + '%'})
             for book in rows:
@@ -62,6 +65,17 @@ class Books():
         except Exception as e:
             traceback.print_exc(file=sys.stdout)
             return None
+    
+    def add_review(self, review, rating, user_id, isbn):
+        try:
+             book_id = next(db.execute("SELECT id FROM books WHERE isbn=:isbn", {'isbn':isbn}))[0]
+             db.execute("INSERT INTO reviews (book_id, user_id, review, rating) VALUES (:book_id, :user_id, :review, :rating)", 
+             {'book_id':book_id, 'user_id':user_id, 'review': review, 'rating':rating})
+             db.commit()
+        except Exception as e:
+            traceback.print_exc(file=sys.stdout)
+             
+
 
     @property
     def books(self):

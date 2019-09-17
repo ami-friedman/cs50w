@@ -28,19 +28,19 @@ class User():
             raise Exception('User already exists')
     
     def login(self):
-        return self._get_user()
+        self._login()
         
-    def _get_user(self):
+    def _login(self):
         try:
             rows = db.execute("SELECT * from users WHERE username=:username", {'username':self._username})
             for user in rows:
                 if user[2] == self._password:
-                    return user[1]
+                    self._id = user[0]
+                    self._username = user[1]
+                    self._password = user[2]
                 print('user not found or passwords do not match')
-            return None
         except Exception as e:
             traceback.print_exc(file=sys.stdout)
-            return None
 
     def _create(self):
         try:
