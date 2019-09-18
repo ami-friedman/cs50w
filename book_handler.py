@@ -2,19 +2,16 @@ from book import Books
 
 
 def find_book_by_isbn(isbn):
-    print('find_book_by_isbn called')
     books = Books()
     books.find_by_isbn(isbn)
     return books.books
 
 def find_book_by_author(author):
-    print('find_book_by_author called')
     books = Books()
     books.find_by_author(author)
     return books.books
 
 def find_book_by_title(title):
-    print('find_book_by_title called')
     books = Books()
     books.find_by_title(title)
     return books.books

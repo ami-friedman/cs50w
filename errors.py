@@ -1,6 +1,9 @@
-class Error(Exception):
+class UserExists(Exception):
     pass
 
-class DBError(Error):
-    
+class InvalidPassword(Exception):
+    pass
+
+class UserDoesNotExist(Exception):
+    pass
     

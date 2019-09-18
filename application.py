@@ -4,6 +4,8 @@ import sys, traceback
 from flask import Flask, session, render_template, request, redirect, url_for, session, flash
 from flask_session import Session
 
+import errors
+
 
 app = Flask(__name__)
 print(__name__)
@@ -19,16 +21,16 @@ app.config["SECRET_KEY"] = "blablaAmidjskdjh"
 Session(app)
 
 try:
-    from user_handler import UserHandler
+    import user_factory
 except Exception as e:
-    print('Could not import from user_handler: {e}')
+    print('Could not import: {e}')
 finally:
     pass
 
 try:
-    from book_handler import func_table, add_review
+    from book_factory import search_func_table
 except Exception as e:
-    print(f'Could not import from book_handler: {e}')
+    print(f'Could not import: {e}')
 finally:
     pass
 
@@ -44,60 +46,50 @@ def index():
 @app.route("/register", methods=["POST", "GET"])
 def register():
     if request.method == 'POST':
-        userHandler = UserHandler(request.form.get('username'), request.form.get('password'))
-        try:
-            userHandler.register()
-            flash('Registration Complete')
-        except Exception as e:
+        try:         
+            user = user_factory.create(request.form.get('username'), request.form.get('password'))
+            return redirect(url_for('search'))
+        except errors.UserExists:
+            flash('Username already taken')
+            return redirect(url_for('register'))
+        except Exception:
             traceback.print_exc(file=sys.stdout)
-            flash('Registration Failed')
-        finally:
-            return redirect(url_for('index.html'))
+            return redirect(url_for('register'))
     else:
         return render_template('register.html')
 
 @app.route("/login", methods=["POST"])
 def login():
-    if request.method == 'POST':
-        userHandler = UserHandler(request.form.get('username'), request.form.get('password'))
-        try:
-            user = userHandler.login()
-            if user:
-                session['username']=user.username
-                session['id']=user.id
-                return redirect(url_for('index'))
-            else:
-                flash("Username not found or password is incorrect")
-                return redirect(url_for('index'))
-        except Exception as e:
-            traceback.print_exc(file=sys.stdout)
-            return redirect(url_for('index'))
+    try:
+        user = user_factory.get(request.form.get('username'), request.form.get('password'))
+        _store_user(user.id, user.username)
+        return redirect(url_for('search'))
+    except errors.InvalidPassword:
+        flash('Wrong Password')
+        return redirect(url_for('index'))
+    except errors.UserDoesNotExist:
+        flash('Wrong Username')
+        return redirect(url_for('index'))
+    except Exception:
+        traceback.print_exc(file=sys.stdout)
+        return redirect(url_for('index'))
 
 @app.route("/logout", methods=["GET"])
 def logout():
-    # Clear the session
-    session['username'] = None
-    session['id'] = None
+    _clear_user()
     return redirect(url_for('index'))
 
 # Books
 @app.route("/search", methods=["POST", "GET"])
 def search():
     if request.method == "POST":
-        topic = request.form.get('topic')
-        search_term = request.form.get('search_term')
-        print(topic, search_term)
-        books = func_table[topic](search_term)
+        books = search_func_table[request.form.get('topic')](request.form.get('search_term'))
         if len(books) == 0:
             flash('No matches found')
-        session['books'] = books
+        _store_books(books)
         return redirect(url_for('results'))
     else:
-        if session['username']:
-            return render_template('search.html')
-        else:
-            flash('Please Login')
-            return redirect(url_for('index'))
+        return render_template('search.html')
 
 
 @app.route("/results", methods=["GET"])
@@ -108,15 +100,26 @@ def results():
 @app.route("/books/<isbn>", methods=["GET"])
 def books(isbn):
 
-    books = func_table['isbn'](isbn)
+    books = search_func_table['isbn'](isbn)
     return render_template('book.html', book = books[0])
 
 @app.route("/review", methods=["POST"])
 def review():
-    # add_review(session['id'],request.form.get('isbn'),request.form.get('review'),request.form.get('rating'))
-    print(session['id'],request.form.get('isbn'),request.form.get('review'),request.form.get('rating'))
+    add_review(session['id'],request.form.get('isbn'),request.form.get('review'),request.form.get('rating'))
 
     return redirect(url_for('results'))
+
+
+def _store_books(books):
+    session['books'] = books
+
+def _store_user(id, username):
+    session['id'] = id
+    session['username'] = username
+
+def _clear_user():
+    session.pop('id', None)
+    session.pop('username', None)
 
 
 
