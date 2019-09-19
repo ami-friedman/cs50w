@@ -29,7 +29,7 @@ class User:
         self._id = id
 
 class Book:
-    def __init__(self, id=None, isbn=None, title=None, author=None, year=None, rating=0):
+    def __init__(self, id=None, isbn=None, title=None, author=None, year=None, rating=0, gr_count=0, gr_rating=0):
         self._id = id
         self._isbn = isbn
         self._author = author
@@ -37,6 +37,8 @@ class Book:
         self._year = year
         self._reviews = []
         self._rating = rating
+        self._gr_count = gr_count
+        self._gr_rating = gr_rating
     
     @property
     def id(self):
@@ -66,6 +68,14 @@ class Book:
     def rating(self):
         return self._rating
     
+    @property
+    def gr_rating(self):
+        return self._gr_rating
+    
+    @property
+    def gr_count(self):
+        return self._gr_count
+    
     @id.setter
     def id(self, id):
         self._id = id
@@ -93,6 +103,24 @@ class Book:
     @rating.setter
     def rating(self, rating):
         self._rating = rating
+    
+    @gr_rating.setter
+    def gr_rating(self, gr_rating):
+        self._gr_rating = gr_rating
+    
+    @gr_count.setter
+    def gr_count(self, gr_count):
+        self._gr_count = gr_count
+    
+    def to_dict(self):
+        return {
+            "title": self._title,
+            "author": self._author,
+            "year": self._year,
+            "isbn": self._isbn,
+            "review_count": self._gr_count,
+            "average_score": self._gr_rating
+        }
 
 class Review:
      def __init__(self, id=None, review=None,rating=None, user=None):

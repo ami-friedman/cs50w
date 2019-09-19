@@ -3,13 +3,21 @@
 {% block content %}
 
 <div class="col-sm">
-    <div class="card mx-auto mt-3" style="width: 18rem;">
+    <div class="card mx-auto mt-3" style="width: 18rem; background-color: #fde3f6;">
             <div class="card-body">
-              <h5 class="card-title card-link"><a href="/books/{{ book.isbn }}">{{ book.title }}</a></h5>
+              <h5 class="card-title card-link">{{ book.title }}</h5>
+              Our Rating:
                 {% for i in range(book.rating) %}
-                <span class="oi" data-glyph="star" aria-hidden="false"></span>
+                <span class="oi" data-glyph="star" aria-hidden="false" style="color: rgb(0, 153, 255);"></span>
                 {% endfor %}
-              <h6 class="card-subtitle mb-2 text-muted">By: {{ book.author }}, {{ book.year }}</h6>
+                <br><small> Good Read's Rating:
+                {% for i in range(book.gr_rating) %}
+                <span class="oi" data-glyph="star" aria-hidden="false" style="color: rgb(255, 0, 0);"></span>
+                {% endfor %}</small>
+
+                <br> <small>Read's Rating Count: {{ book.gr_count }}</small> 
+
+              <p><h6 class="card-subtitle mb-2 text-muted">By: {{ book.author }}, {{ book.year }}</h6></p>
               <p class="card-text">ISBN: {{ book.isbn }}</p>
             </div>
     </div>
@@ -21,9 +29,11 @@
       <div class="d-flex w-100 justify-content-between">
         <h8 class="mb-1">
             {% for review in range(review.rating) %}
-            <span class="oi" data-glyph="star" aria-hidden="false"></span>
+            <span class="oi" data-glyph="star" aria-hidden="false" style="color: rgb(255, 0, 200);"></span>
             {% endfor %}
         </h8>
+        
+        
         <small>{{ review.user }}</small>
       </div>
       <p class="mb-1">{{ review.review }}</p>

@@ -1,5 +1,7 @@
 import os
-import sys, traceback
+import sys
+import traceback
+import json
 
 from flask import Flask, session, render_template, request, redirect, url_for, session, flash
 from flask_session import Session
@@ -100,8 +102,16 @@ def results():
 @app.route("/books/<isbn>", methods=["GET"])
 def books(isbn):
 
-    books = search_func_table['isbn'](isbn)
-    return render_template('book.html', book = books[0])
+    book = search_func_table['single'](isbn)
+    return render_template('book.html', book = book)
+
+@app.route("/api/<isbn>", methods=["POST"])
+def api(isbn):
+
+    book = search_func_table['single'](isbn)
+    if book:
+        return json.dumps(book.to_dict())
+    return "Book Not Found"
 
 @app.route("/review", methods=["POST"])
 def review():
