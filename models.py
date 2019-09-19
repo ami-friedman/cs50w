@@ -29,7 +29,7 @@ class User:
         self._id = id
 
 class Book:
-    def __init__(self, id=None, isbn=None, title=None, author=None, year=None, rating=None):
+    def __init__(self, id=None, isbn=None, title=None, author=None, year=None, rating=0):
         self._id = id
         self._isbn = isbn
         self._author = author
@@ -95,7 +95,40 @@ class Book:
         self._rating = rating
 
 class Review:
-     def __init__(self, id=None, review=None,rating=None):
+     def __init__(self, id=None, review=None,rating=None, user=None):
         self._id = id
         self._review = review
         self._rating = rating
+        self._user = user
+    
+     @property
+     def id(self):
+         return self._id
+     
+     @property
+     def review(self):
+         return self._review
+     
+     @property
+     def rating(self):
+         return self._rating
+     
+     @property
+     def user(self):
+         return self._user
+
+     @id.setter
+     def id(self, id):
+         self._id = id
+
+     @review.setter
+     def review(self, review):
+         self._review = review
+
+     @rating.setter
+     def rating(self, rating):
+         self._rating = rating
+
+     @user.setter
+     def user(self, user):
+         self._user = user 

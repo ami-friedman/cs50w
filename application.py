@@ -105,9 +105,12 @@ def books(isbn):
 
 @app.route("/review", methods=["POST"])
 def review():
-    add_review(session['id'],request.form.get('isbn'),request.form.get('review'),request.form.get('rating'))
-
-    return redirect(url_for('results'))
+    try:
+        search_func_table['add_review'](session['id'],request.form.get('book_id'),request.form.get('review'),request.form.get('rating'))
+    except errors.NumReviewsExceeded:
+        flash('Only one review per user is permitted')
+    finally:
+        return redirect(url_for('books', isbn=request.form.get('isbn')))
 
 
 def _store_books(books):

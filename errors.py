@@ -6,4 +6,7 @@ class InvalidPassword(Exception):
 
 class UserDoesNotExist(Exception):
     pass
+
+class NumReviewsExceeded(Exception):
+    pass
     
